@@ -1,7 +1,9 @@
 import Form from "./Components/Form";
-import Todo from "./Components/Todo";
+// import Todo from "./Components/Todo";
 
 function App(props) {
+  const taskList = props.tasks.map((task) => task.name);
+
   return (
     <div className="todoapp stack-large">
       <h1>TodoMatic</h1>
@@ -29,9 +31,7 @@ function App(props) {
         className="todo-list stack-large stack-exception"
         aria-labelledby="list-heading"
       >
-        <Todo />
-        <Todo />
-        <Todo />
+        {taskList}
       </ul>
     </div>
   );
