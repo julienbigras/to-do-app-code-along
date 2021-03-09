@@ -29,6 +29,25 @@ function App(props) {
     setTasks(updatedTasks);
   }
 
+  // function to edit the names of the tasks on the list
+  // function editTask(id, newName) {
+  //   const editedTaskList = tasks.map((task) => {
+  //     // if this task has the same ID as the edited task
+  //     if (id === task.id) {
+  //       // create a new object for that task, and update the name to the new name
+  //       return { ...task, name: newName };
+  //     }
+  //     return task;
+  //   });
+  //   setTasks(editedTaskList);
+  // }
+
+  // function to delete a task from the to do list
+  function deleteTask(id) {
+    const remainingTasks = tasks.filter((task) => id !== task.id);
+    setTasks(remainingTasks);
+  }
+
   // maps over the starting tasks data being passed into the App component as a prop
   const taskList = tasks.map((task) => (
     <Todo
@@ -37,6 +56,7 @@ function App(props) {
       id={task.id}
       key={task.id}
       toggleCompletedTask={toggleCompletedTask}
+      deleteTask={deleteTask}
     />
   ));
 
