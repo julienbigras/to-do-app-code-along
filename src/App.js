@@ -31,12 +31,15 @@ function App(props) {
 
   // function to update the "completed" value of the task object in state
   function toggleCompletedTask(id) {
+    /* maps over the tasks list and flips the "completed" value if the task id matches the id
+    being passed into the toggle function */
     const updatedTasks = tasks.map((task) => {
       if (id === task.id) {
         return { ...task, completed: !task.completed };
       }
       return task;
     });
+    // updates the task state with the toggled completion value
     setTasks(updatedTasks);
   }
 
@@ -50,12 +53,15 @@ function App(props) {
       }
       return task;
     });
+    // updates the tasks state to include the item with the edited name
     setTasks(editedTaskList);
   }
 
   // function to delete a task from the to do list
   function deleteTask(id) {
+    // returns all the tasks except the one whose id matches the id being passed into the delete function
     const remainingTasks = tasks.filter((task) => id !== task.id);
+    // updates the tasks state with only the remaining tasks
     setTasks(remainingTasks);
   }
 
@@ -74,9 +80,11 @@ function App(props) {
       />
     ));
 
+  // edits the header text content depending on how many tasks are on the list
   const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
   const headingText = `${taskList.length} ${tasksNoun} remaining`;
 
+  // maps over the filter names and creates a button component for each
   const filterList = FILTER_NAMES.map((name) => {
     return (
       <FilterButton
