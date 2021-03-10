@@ -4,9 +4,20 @@ import Todo from "./Components/Todo";
 import Form from "./Components/Form";
 import FilterButton from "./Components/FilterButton";
 
+// different functions that will be associated with the different filter buttons
+const FILTER_MAP = {
+  All: () => true,
+  Active: (task) => !task.completed,
+  Completed: (task) => task.completed,
+};
+
+const FILTER_NAMES = Object.keys(FILTER_MAP);
+
 function App(props) {
-  // setState for our task list
+  // useState for our task list
   const [tasks, setTasks] = useState(props.tasks);
+  // useState for our filter buttons
+  const [filter, setFilter] = useState("All");
 
   // function to add a new task to the to do list
   function addTask(name) {
@@ -49,30 +60,39 @@ function App(props) {
   }
 
   // maps over the starting tasks data being passed into the App component as a prop
-  const taskList = tasks.map((task) => (
-    <Todo
-      name={task.name}
-      completed={task.completed}
-      id={task.id}
-      key={task.id}
-      toggleCompletedTask={toggleCompletedTask}
-      deleteTask={deleteTask}
-      editTask={editTask}
-    />
-  ));
+  const taskList = tasks
+    .filter(FILTER_MAP[filter])
+    .map((task) => (
+      <Todo
+        name={task.name}
+        completed={task.completed}
+        id={task.id}
+        key={task.id}
+        toggleCompletedTask={toggleCompletedTask}
+        deleteTask={deleteTask}
+        editTask={editTask}
+      />
+    ));
 
-  const tasksNoun = tasks.length !== 1 ? "tasks" : "task";
-  const headingText = `${tasks.length} ${tasksNoun} remaining`;
+  const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
+  const headingText = `${taskList.length} ${tasksNoun} remaining`;
+
+  const filterList = FILTER_NAMES.map((name) => {
+    return (
+      <FilterButton
+        key={name}
+        name={name}
+        isPressed={name === filter}
+        setFilter={setFilter}
+      />
+    );
+  });
 
   return (
     <div className="todoapp stack-large">
-      <h1>TodoMatic</h1>
+      <h1>To-Do List</h1>
       <Form addTask={addTask} />
-      <div className="filters btn-group stack-exception">
-        <FilterButton />
-        <FilterButton />
-        <FilterButton />
-      </div>
+      <div className="filters btn-group stack-exception">{filterList}</div>
       <h2 id="list-heading">{headingText}</h2>
       <ul
         role="list"
