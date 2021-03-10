@@ -30,17 +30,17 @@ function App(props) {
   }
 
   // function to edit the names of the tasks on the list
-  // function editTask(id, newName) {
-  //   const editedTaskList = tasks.map((task) => {
-  //     // if this task has the same ID as the edited task
-  //     if (id === task.id) {
-  //       // create a new object for that task, and update the name to the new name
-  //       return { ...task, name: newName };
-  //     }
-  //     return task;
-  //   });
-  //   setTasks(editedTaskList);
-  // }
+  function editTask(id, newName) {
+    const editedTaskList = tasks.map((task) => {
+      // if this task has the same ID as the edited task
+      if (id === task.id) {
+        // create a new object for that task, and update the name to the new name
+        return { ...task, name: newName };
+      }
+      return task;
+    });
+    setTasks(editedTaskList);
+  }
 
   // function to delete a task from the to do list
   function deleteTask(id) {
@@ -57,6 +57,7 @@ function App(props) {
       key={task.id}
       toggleCompletedTask={toggleCompletedTask}
       deleteTask={deleteTask}
+      editTask={editTask}
     />
   ));
 
