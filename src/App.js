@@ -1,8 +1,17 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { nanoid } from "nanoid";
 import Todo from "./Components/Todo";
 import Form from "./Components/Form";
 import FilterButton from "./Components/FilterButton";
+
+// custom hook in order to get the component's previous state
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
 
 // different functions that will be associated with the different filter buttons
 const FILTER_MAP = {
@@ -84,6 +93,9 @@ function App(props) {
   const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
   const headingText = `${taskList.length} ${tasksNoun} remaining`;
 
+  // new ref
+  const listHeadingRef = useRef(null);
+
   // maps over the filter names and creates a button component for each
   const filterList = FILTER_NAMES.map((name) => {
     return (
@@ -96,12 +108,24 @@ function App(props) {
     );
   });
 
+  // variable to store the previous length of the task list
+  const prevTaskLength = usePrevious(tasks.length);
+
+  // this will move the focus to the header of the task list when a list item is deleted
+  useEffect(() => {
+    if (tasks.length - prevTaskLength === -1) {
+      listHeadingRef.current.focus();
+    }
+  }, [tasks.length, prevTaskLength]);
+
   return (
     <div className="todoapp stack-large">
       <h1>To-Do List</h1>
       <Form addTask={addTask} />
       <div className="filters btn-group stack-exception">{filterList}</div>
-      <h2 id="list-heading">{headingText}</h2>
+      <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>
+        {headingText}
+      </h2>
       <ul
         role="list"
         className="todo-list stack-large stack-exception"

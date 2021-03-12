@@ -1,10 +1,26 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+// custom hook in order to get the component's previous state
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
 
 function Todo(props) {
   // state for whether or not a task is being edited, with the default state set to false
   const [isEditing, setEditing] = useState(false);
   // state for the new name of a task after being edited
   const [newName, setNewName] = useState("");
+
+  const editFieldRef = useRef(null);
+  const editButtonRef = useRef(null);
+
+  // variable that checks the previous edit state of the component
+  // this will be used to help move the focus when different templates are rendered
+  const wasEditing = usePrevious(isEditing);
 
   function handleChange(e) {
     setNewName(e.target.value);
@@ -29,6 +45,7 @@ function Todo(props) {
           type="text"
           value={newName}
           onChange={handleChange}
+          ref={editFieldRef}
         />
       </div>
       <div className="btn-group">
@@ -62,7 +79,12 @@ function Todo(props) {
         </label>
       </div>
       <div className="btn-group">
-        <button type="button" className="btn" onClick={() => setEditing(true)}>
+        <button
+          type="button"
+          className="btn"
+          onClick={() => setEditing(true)}
+          ref={editButtonRef}
+        >
           Edit <span className="visually-hidden">{props.name}</span>
         </button>
         <button
@@ -76,6 +98,21 @@ function Todo(props) {
     </div>
   );
 
+  useEffect(() => {
+    // if wasEditing is false and isEditing is true
+    // focus moves to input field of the edit template
+    if (!wasEditing && isEditing) {
+      editFieldRef.current.focus();
+    }
+    // if wasEditing is true and isEditing is false
+    // focus moves to edit button of viewing template
+    if (wasEditing && !isEditing) {
+      editButtonRef.current.focus();
+    }
+    // array of values to watch for change, which will trigger useEffect
+  }, [wasEditing, isEditing]);
+
+  // checks if the user is editing the list, and renders the corresponding template
   return <li className="todo">{isEditing ? editingTemplate : viewTemplate}</li>;
 }
 
